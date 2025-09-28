@@ -1,24 +1,16 @@
+// 25, 28 September, 2025
+// 
+// even if I suck at cpp and low level
+// even if I dunno how to build the project
+// I still love writing in them
+// some day, I hope I can write without thinking in these c & cpp languages
+//
+
 #include <cstddef>
 #include <cstdlib>
+#include <iostream>
 
-// what learned
-// char pointer is used for storing addresses of chars or array of chars
-// char c = 'A';
-// char str[6] = 'hello';
-//
-// void pointer is used to show the memory location of char pointer
-// because char pointer does not null terminator like strings 
-// so it will continue to read the memory
-// until it encounters \0 - null terminator
-// when we use void* it will not happen
-//
-// char* cptr = &c;
-// or
-// char* cptr = str;
-// cout << (void*)cptr;
-// cout << (void*)&c; to view the address of char
-// void* - generic pointer
-//
+using namespace std;
 
 class BumpAllocator {
     char* start;
@@ -26,12 +18,13 @@ class BumpAllocator {
     size_t offset;
 
 public:
-    BumpAllocator(size_t capacity) {
+    BumpAllocator(size_t cap) {
         start = (char*) std::malloc(capacity); // ask memory from os
-        capacity = capacity;
+        capacity = cap;
         offset = 0;
     }
 
+    // allocates raw memory and returns pointer to it
     void* alloc(size_t n) {
         // check if n does not exceed the initialized capacity
         if (offset + n > capacity) {
@@ -46,6 +39,11 @@ public:
 
         return ptr;
     }
+    
+    // view remaning capacity
+    size_t remainning_capacity() {
+        return capacity - offset;
+    }
 
     // free everything
     void reset() {
@@ -57,5 +55,43 @@ public:
         std::free(start);
     }
 
+};
+
+typedef struct node {
+    int val;
+    struct node* next;
+} node;
+
+int main() {
+    BumpAllocator allocator(64);
+
+    cout << allocator.remainning_capacity() << "\n";
+
+    // allocate memory for int
+    int* a = (int*) allocator.alloc(sizeof(int));
+    *a = 42;
+
+    cout << allocator.remainning_capacity() << "\n";
+
+    // allocate memory for double
+    double* b = (double*) allocator.alloc(sizeof(double));
+    *b = 3.14;
+
+    cout << allocator.remainning_capacity() << "\n";
+
+    // allocate memory for linked list node
+    node* n = (node*) allocator.alloc(sizeof(node));
+    // (*n).val = 20;
+    n->val = 20;
+
+    cout << allocator.remainning_capacity() << "\n";
+
+    cout << *a << " " << *b << " " << n->val << "\n";
+
+    allocator.reset();
+
+    cout << allocator.remainning_capacity() << "\n";
+
+    return 0;
 }
 

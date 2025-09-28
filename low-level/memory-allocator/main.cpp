@@ -12,7 +12,7 @@ int main() {
 
     cout << (void*)cptr << "\n";
     cout << *cptr << "\n";
-    cout << (void*)str<< "\n";
+    cout << (void*)str << "\n";
     cout << (void*)&c << "\n";
     return 0;
 }

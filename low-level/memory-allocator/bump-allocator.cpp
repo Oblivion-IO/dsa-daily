@@ -19,7 +19,7 @@ class BumpAllocator {
 
 public:
     BumpAllocator(size_t cap) {
-        start = (char*) std::malloc(capacity); // ask memory from os
+        start = (char*) std::malloc(cap); // ask memory from os
         capacity = cap;
         offset = 0;
     }
